@@ -1,0 +1,69 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+const competitorRoutes = require('./routes/competitors');
+const statusRoutes = require('./routes/status');
+const errorHandler = require('./middleware/errorHandler');
+const logger = require('./utils/logger');
+
+const app = express();
+
+// Security headers
+app.use(helmet());
+
+// CORS
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'http://localhost:5173', // Vite dev server
+];
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error(`CORS: origin ${origin} not allowed`));
+            }
+        },
+        credentials: true,
+    })
+);
+
+// Body parser
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Global rate limit
+app.use(
+    rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 min
+        max: 200,
+        standardHeaders: true,
+        legacyHeaders: false,
+    })
+);
+
+// Request logger
+app.use((req, _res, next) => {
+    logger.debug(`→ ${req.method} ${req.path}`);
+    next();
+});
+
+// Routes
+app.use('/api/competitors', competitorRoutes);
+app.use('/api/status', statusRoutes);
+
+// Health check (lightweight, no DB)
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+
+// 404
+app.use((_req, res) => {
+    res.status(404).json({ success: false, message: 'Route not found' });
+});
+
+// Global error handler
+app.use(errorHandler);
+
+module.exports = app;

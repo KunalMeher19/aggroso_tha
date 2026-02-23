@@ -26,7 +26,7 @@ services:
       - NODE_ENV=production
       - PORT=5000
       - MONGODB_URI=MONGODB_URI_REDACTED
-      - GEMINI_API_KEY=AIzaSyAqwe4lg4XE7HohvAZ3P6fanhZxAdEPUMo
+      - GEMINI_API_KEY=REDACTED_API_KEY
       - FRONTEND_URL=http://localhost
     networks:
       - compnet

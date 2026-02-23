@@ -1,19 +1,46 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const axios = require('axios');
 const logger = require('../utils/logger');
 
-let genAI = null;
-
-const getClient = () => {
-    if (!genAI) {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
-        genAI = new GoogleGenerativeAI(apiKey, { apiVersion: 'v1' });
-    }
-    return genAI;
-};
+const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+// Free model on OpenRouter — reliable and fast
+const MODEL = 'google/gemini-2.0-flash-exp:free';
 
 const MAX_DIFF_CHARS = 8000;
 const CHUNK_SIZE = 6000;
+
+const getApiKey = () => {
+    const key = process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;
+    if (!key) throw new Error('OPENROUTER_API_KEY is not configured');
+    return key;
+};
+
+/**
+ * Call OpenRouter chat completions endpoint.
+ */
+const callLLM = async (prompt) => {
+    const response = await axios.post(
+        `${OPENROUTER_BASE}/chat/completions`,
+        {
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 1024,
+            temperature: 0.3,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${getApiKey()}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'http://localhost',
+                'X-Title': 'CompTracker',
+            },
+            timeout: 30000,
+        }
+    );
+
+    const choice = response.data?.choices?.[0];
+    if (!choice) throw new Error('Empty response from OpenRouter');
+    return choice.message.content;
+};
 
 /**
  * Build the summarization prompt for a diff.
@@ -69,7 +96,7 @@ const chunkDiff = (added, removed) => {
 };
 
 /**
- * Call Gemini to summarize a diff.
+ * Summarize a diff using OpenRouter.
  * Handles chunking for large diffs.
  */
 const summarizeDiff = async (competitorName, urlType, diffData) => {
@@ -80,18 +107,13 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
     }
 
     try {
-        const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
-
         const totalChars = [...added, ...removed].join('').length;
-
         let summaryText;
 
         if (totalChars <= MAX_DIFF_CHARS) {
             // Single call
             const prompt = buildPrompt(competitorName, urlType, added, removed);
-            const result = await model.generateContent(prompt);
-            summaryText = result.response.text();
+            summaryText = await callLLM(prompt);
         } else {
             // Chunked summarization → merge
             logger.info(`Diff too large (${totalChars} chars), chunking for ${competitorName}`);
@@ -102,15 +124,13 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
                 const chunkAdded = chunk.filter((l) => l.startsWith('+')).map((l) => l.slice(1));
                 const chunkRemoved = chunk.filter((l) => l.startsWith('-')).map((l) => l.slice(1));
                 const prompt = buildPrompt(competitorName, urlType, chunkAdded, chunkRemoved);
-
-                const result = await model.generateContent(prompt);
-                chunkSummaries.push(`[Part ${i + 1}]\n${result.response.text()}`);
+                const text = await callLLM(prompt);
+                chunkSummaries.push(`[Part ${i + 1}]\n${text}`);
             }
 
             // Merge summaries
             const mergePrompt = `You analyzed changes on ${competitorName}'s ${urlType} page in ${chunks.length} parts. Here are the part summaries:\n\n${chunkSummaries.join('\n\n---\n\n')}\n\nWrite a unified, concise final summary combining all parts. Include key changes, important citations, and impact level.`;
-            const merged = await model.generateContent(mergePrompt);
-            summaryText = merged.response.text();
+            summaryText = await callLLM(mergePrompt);
         }
 
         return { summary: summaryText, status: 'success' };
@@ -128,10 +148,7 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
  */
 const testLLMConnection = async () => {
     try {
-        const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
-        const result = await model.generateContent('Reply with: OK');
-        const text = result.response.text();
+        const text = await callLLM('Reply with exactly: OK');
         return { ok: true, response: text.trim() };
     } catch (err) {
         return { ok: false, error: err.message };

@@ -58,18 +58,15 @@ app.use((req, _res, next) => {
 app.use('/api/competitors', competitorRoutes);
 app.use('/api/status', statusRoutes);
 
-// Serve built frontend static files
-app.use(express.static(path.join(__dirname, '../public')));
-app.get('*name', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
 // Health check (lightweight, no DB)
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// 404
-app.use((_req, res) => {
-    res.status(404).json({ success: false, message: 'Route not found' });
+// Serve built frontend static files
+app.use(express.static(path.join(__dirname, '../public')));
+
+// SPA fallback — must be LAST, after all API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Global error handler

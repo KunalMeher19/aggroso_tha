@@ -2,8 +2,8 @@ const axios = require('axios');
 const logger = require('../utils/logger');
 
 const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
-// Free model on OpenRouter — stable and widely available
-const MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+// Free model on OpenRouter
+const MODEL = 'arcee-ai/trinity-large-preview:free';
 
 const MAX_DIFF_CHARS = 8000;
 const CHUNK_SIZE = 6000;

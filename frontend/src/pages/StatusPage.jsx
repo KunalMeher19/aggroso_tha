@@ -115,7 +115,7 @@ export default function StatusPage() {
                         message={services.database?.message}
                     />
                     <ServiceCard
-                        name="OpenRouter (llama-3.1-8b:free)"
+                        name="OpenRouter (arcee-ai/trinity:free)"
                         icon="🤖"
                         status={services.llm?.status}
                         message={services.llm?.message}
@@ -135,7 +135,7 @@ export default function StatusPage() {
                     {[
                         ['Backend', 'Node.js + Express'],
                         ['Database', 'MongoDB (Mongoose)'],
-                        ['AI Provider', 'OpenRouter — llama-3.1-8b-instruct:free'],
+                        ['AI Provider', 'OpenRouter — arcee-ai/trinity-large-preview:free'],
                         ['Scraping', 'Axios + Cheerio (3-retry + UA rotation)'],
                         ['Diff Engine', 'npm diff (line-level)'],
                         ['Frontend', 'React + Vite'],

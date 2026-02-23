@@ -81,7 +81,7 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
 
     try {
         const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
 
         const totalChars = [...added, ...removed].join('').length;
 
@@ -129,7 +129,7 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
 const testLLMConnection = async () => {
     try {
         const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
         const result = await model.generateContent('Reply with: OK');
         const text = result.response.text();
         return { ok: true, response: text.trim() };

@@ -115,7 +115,7 @@ export default function StatusPage() {
                         message={services.database?.message}
                     />
                     <ServiceCard
-                        name="Gemini 2.0-flash (LLM)"
+                        name="Gemini 1.5-flash-latest (LLM)"
                         icon="🤖"
                         status={services.llm?.status}
                         message={services.llm?.message}
@@ -135,7 +135,7 @@ export default function StatusPage() {
                     {[
                         ['Backend', 'Node.js + Express'],
                         ['Database', 'MongoDB (Mongoose)'],
-                        ['AI Provider', 'Google Gemini 2.0-flash'],
+                        ['AI Provider', 'Google Gemini 1.5-flash-latest'],
                         ['Scraping', 'Axios + Cheerio (3-retry + UA rotation)'],
                         ['Diff Engine', 'npm diff (line-level)'],
                         ['Frontend', 'React + Vite'],

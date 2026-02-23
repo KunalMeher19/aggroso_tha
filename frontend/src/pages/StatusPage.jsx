@@ -10,10 +10,10 @@ function ServiceCard({ name, icon, status, message }) {
             className="card"
             style={{
                 borderLeft: `4px solid ${isOk
-                        ? 'var(--accent-green)'
-                        : isError
-                            ? 'var(--accent-red)'
-                            : 'var(--accent-amber)'
+                    ? 'var(--accent-green)'
+                    : isError
+                        ? 'var(--accent-red)'
+                        : 'var(--accent-amber)'
                     }`,
             }}
         >
@@ -115,7 +115,7 @@ export default function StatusPage() {
                         message={services.database?.message}
                     />
                     <ServiceCard
-                        name="Gemini 1.5-flash (LLM)"
+                        name="Gemini 2.0-flash (LLM)"
                         icon="🤖"
                         status={services.llm?.status}
                         message={services.llm?.message}
@@ -135,7 +135,7 @@ export default function StatusPage() {
                     {[
                         ['Backend', 'Node.js + Express'],
                         ['Database', 'MongoDB (Mongoose)'],
-                        ['AI Provider', 'Google Gemini 1.5-flash'],
+                        ['AI Provider', 'Google Gemini 2.0-flash'],
                         ['Scraping', 'Axios + Cheerio (3-retry + UA rotation)'],
                         ['Diff Engine', 'npm diff (line-level)'],
                         ['Frontend', 'React + Vite'],

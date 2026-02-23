@@ -6,6 +6,84 @@ import DiffViewer from '../components/DiffViewer'
 import LLMSummary from '../components/LLMSummary'
 import HistoryTimeline from '../components/HistoryTimeline'
 
+function SnapshotPreview({ snapshotId }) {
+    const [open, setOpen] = useState(false)
+    const content = snapshotId?.cleanedContent
+    const lines = content ? content.split('\n').filter(Boolean) : []
+    const fetchStatus = snapshotId?.fetchStatus
+
+    if (!content && fetchStatus !== 'success') {
+        return (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                {fetchStatus === 'blocked' ? 'Content blocked — website rejected the request.'
+                    : fetchStatus === 'timeout' ? 'Request timed out.'
+                        : 'No snapshot content available.'}
+            </div>
+        )
+    }
+
+    if (!content) return null
+
+    return (
+        <div
+            style={{
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                overflow: 'hidden',
+                marginTop: '4px',
+            }}
+        >
+            <button
+                onClick={() => setOpen((o) => !o)}
+                style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.02)',
+                    border: 'none',
+                    borderBottom: open ? '1px solid var(--border)' : 'none',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    padding: '10px 14px',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                }}
+            >
+                <span>{open ? '▲' : '▼'}</span>
+                <span>Fetched content</span>
+                <span style={{ opacity: 0.6 }}>({lines.length} lines)</span>
+                <span
+                    className="badge badge-green"
+                    style={{ marginLeft: 'auto', fontSize: '0.7rem' }}
+                >
+                    OK Scraped
+                </span>
+            </button>
+            {open && (
+                <pre
+                    style={{
+                        margin: 0,
+                        padding: '14px',
+                        fontSize: '0.78rem',
+                        color: 'var(--text-secondary)',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                        maxHeight: '500px',
+                        overflowY: 'auto',
+                        lineHeight: 1.65,
+                        fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
+                        background: '#0d0d0d',
+                    }}
+                >
+                    {content}
+                </pre>
+            )}
+        </div>
+    )
+}
+
 const URL_TYPES = ['pricing', 'docs', 'changelog']
 const URL_LABELS = { pricing: '💰 Pricing', docs: '📖 Docs', changelog: '📋 Changelog' }
 
@@ -191,6 +269,7 @@ export default function CompetitorDetailPage() {
                                 changeScore={latestResult.changeScore}
                                 isFirstCheck={latestResult.isFirstCheck}
                             />
+                            <SnapshotPreview snapshotId={latestResult.snapshotId} />
                             <LLMSummary summary={latestResult.llmSummary} status={latestResult.llmStatus} />
                         </div>
                     ) : (

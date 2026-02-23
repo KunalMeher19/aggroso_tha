@@ -88,11 +88,11 @@ const checkUrlType = async (competitor, urlType) => {
         await CheckResult.deleteMany({ _id: { $in: toDelete } });
     }
 
-    // Return the check result + a content preview for the dashboard modal
+    // Return the check result + full content for the dashboard modal
     const lines = scraped.cleanedContent ? scraped.cleanedContent.split('\n').filter(Boolean) : [];
     return {
         ...checkResult.toObject(),
-        contentPreview: scraped.cleanedContent?.slice(0, 800) || '',
+        contentPreview: scraped.cleanedContent || '',
         lineCount: lines.length,
         fetchStatus: scraped.fetchStatus,
         errorMessage: scraped.errorMessage || '',
@@ -168,7 +168,7 @@ const getHistory = async (req, res, next) => {
         const history = await CheckResult.find(filter)
             .sort({ createdAt: -1 })
             .limit(15) // up to 5 per urlType (3 types × 5 = 15 max)
-            .populate('snapshotId', 'fetchStatus errorMessage createdAt')
+            .populate('snapshotId', 'fetchStatus errorMessage createdAt cleanedContent')
             .lean();
 
         res.json({ success: true, data: history });

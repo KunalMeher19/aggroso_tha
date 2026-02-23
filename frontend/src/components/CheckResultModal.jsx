@@ -171,18 +171,13 @@ function ContentPreview({ content, lineCount }) {
                         color: 'var(--text-secondary)',
                         whiteSpace: 'pre-wrap',
                         wordBreak: 'break-word',
-                        maxHeight: '220px',
+                        maxHeight: '500px',
                         overflowY: 'auto',
                         lineHeight: 1.6,
                         fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
                     }}
                 >
                     {content}
-                    {content.length >= 800 && (
-                        <span style={{ color: 'var(--text-muted)', display: 'block', marginTop: '8px' }}>
-                            … (showing first 800 chars)
-                        </span>
-                    )}
                 </pre>
             )}
         </div>

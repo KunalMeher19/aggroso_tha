@@ -357,7 +357,31 @@ a:hover {
   border: 1px solid var(--border);
 }
 
-/* ─── Forms ─────────────────────────────────── */
+/* ─── Tab Buttons (CheckResultModal) ────────── */
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--text-secondary);
+}
+
+.tab-btn.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-silver);
+}
+
+
 .form-group {
   display: flex;
   flex-direction: column;

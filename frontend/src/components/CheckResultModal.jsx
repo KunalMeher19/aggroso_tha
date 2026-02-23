@@ -136,6 +136,59 @@ function AISummaryPanel({ summary, status }) {
     )
 }
 
+function ContentPreview({ content, lineCount }) {
+    const [open, setOpen] = useState(false)
+    if (!content) return null
+    return (
+        <div style={{ marginTop: '12px' }}>
+            <button
+                onClick={() => setOpen((o) => !o)}
+                style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    padding: 0,
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                }}
+            >
+                {open ? '▲' : '▼'} Fetched content preview
+                <span style={{ color: 'var(--text-muted)', opacity: 0.6 }}>({lineCount} lines)</span>
+            </button>
+            {open && (
+                <pre
+                    style={{
+                        marginTop: '8px',
+                        padding: '12px',
+                        background: '#0d0d0d',
+                        border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: '0.75rem',
+                        color: 'var(--text-secondary)',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                        maxHeight: '220px',
+                        overflowY: 'auto',
+                        lineHeight: 1.6,
+                        fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace",
+                    }}
+                >
+                    {content}
+                    {content.length >= 800 && (
+                        <span style={{ color: 'var(--text-muted)', display: 'block', marginTop: '8px' }}>
+                            … (showing first 800 chars)
+                        </span>
+                    )}
+                </pre>
+            )}
+        </div>
+    )
+}
+
 function UrlResult({ result }) {
     const { urlType, status: settledStatus, data, error } = result
 
@@ -146,7 +199,7 @@ function UrlResult({ result }) {
                     <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
                         {URL_LABELS[urlType] || urlType}
                     </span>
-                    <span className="badge badge-red">✗ Error</span>
+                    <span className="badge badge-red">X Error</span>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--accent-red)' }}>{error}</p>
             </div>
@@ -155,8 +208,9 @@ function UrlResult({ result }) {
 
     if (!data) return null
 
-    const { diffData, changeScore, llmSummary, llmStatus, isFirstCheck } = data
-    const scrapeStatus = isFirstCheck ? 'first_check' : data.snapshotId ? 'success' : 'failed'
+    const { diffData, changeScore, llmSummary, llmStatus, isFirstCheck,
+        contentPreview, lineCount, fetchStatus } = data
+    const scrapeOk = fetchStatus === 'success'
     const addedLines = diffData?.added?.length || 0
     const removedLines = diffData?.removed?.length || 0
 
@@ -167,7 +221,10 @@ function UrlResult({ result }) {
                 <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {URL_LABELS[urlType] || urlType}
                 </span>
-                <ScrapeBadge status={scrapeStatus} />
+                {scrapeOk
+                    ? <span className="badge badge-green">OK Scraped</span>
+                    : <span className="badge badge-red">X {fetchStatus || 'failed'}</span>
+                }
                 {!isFirstCheck && changeScore !== undefined && (
                     <span
                         className="badge"
@@ -190,7 +247,7 @@ function UrlResult({ result }) {
                 )}
             </div>
 
-            {/* Stats row */}
+            {/* Content state */}
             {isFirstCheck ? (
                 <div
                     style={{
@@ -202,9 +259,9 @@ function UrlResult({ result }) {
                         color: 'var(--text-secondary)',
                     }}
                 >
-                    <strong style={{ color: 'var(--text-primary)' }}>◈ Baseline captured</strong>
+                    <strong style={{ color: 'var(--text-primary)' }}>Baseline captured</strong>
                     <span style={{ color: 'var(--text-muted)', marginLeft: '8px' }}>
-                        {addedLines} lines stored
+                        {lineCount} lines stored
                     </span>
                     <p style={{ marginTop: '6px', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
                         Run Check Now again to start seeing diffs.
@@ -212,19 +269,16 @@ function UrlResult({ result }) {
                 </div>
             ) : (
                 <>
-                    {/* Stats summary row */}
                     {(addedLines > 0 || removedLines > 0) && (
                         <div style={{ display: 'flex', gap: '12px', marginBottom: '10px', fontSize: '0.8rem' }}>
                             {addedLines > 0 && (
                                 <span style={{ color: 'var(--accent-green)' }}>+{addedLines} lines added</span>
                             )}
                             {removedLines > 0 && (
-                                <span style={{ color: 'var(--accent-red)' }}>−{removedLines} lines removed</span>
+                                <span style={{ color: 'var(--accent-red)' }}>-{removedLines} lines removed</span>
                             )}
                         </div>
                     )}
-
-                    {/* Diff viewer (capped) */}
                     <DiffViewer
                         diffData={diffData}
                         changeScore={changeScore}
@@ -232,6 +286,9 @@ function UrlResult({ result }) {
                     />
                 </>
             )}
+
+            {/* Scraped content preview */}
+            <ContentPreview content={contentPreview} lineCount={lineCount || 0} />
 
             {/* AI Summary */}
             <AISummaryPanel summary={llmSummary} status={llmStatus} />

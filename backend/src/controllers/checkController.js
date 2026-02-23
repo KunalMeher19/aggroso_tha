@@ -88,7 +88,15 @@ const checkUrlType = async (competitor, urlType) => {
         await CheckResult.deleteMany({ _id: { $in: toDelete } });
     }
 
-    return checkResult;
+    // Return the check result + a content preview for the dashboard modal
+    const lines = scraped.cleanedContent ? scraped.cleanedContent.split('\n').filter(Boolean) : [];
+    return {
+        ...checkResult.toObject(),
+        contentPreview: scraped.cleanedContent?.slice(0, 800) || '',
+        lineCount: lines.length,
+        fetchStatus: scraped.fetchStatus,
+        errorMessage: scraped.errorMessage || '',
+    };
 };
 
 // POST /api/competitors/:id/check

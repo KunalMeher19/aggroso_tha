@@ -120,7 +120,7 @@ function CompetitorCard({ competitor, onDeleted, onChecked }) {
                     >
                         {checking ? (
                             <><span className="spinner" style={{ width: 14, height: 14 }} /> Checking...</>
-                        ) : '⚡ Check Now'}
+                        ) : '▶ Check Now'}
                     </button>
                 </div>
             </div>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-                    ➕ Add Competitor
+                    ＋ Add Competitor
                 </button>
             </div>
 
@@ -205,11 +205,11 @@ export default function DashboardPage() {
                 </div>
             ) : competitors.length === 0 ? (
                 <div className="empty-state">
-                    <div className="empty-icon">🔭</div>
+                    <div className="empty-icon">◈</div>
                     <h3>No competitors yet</h3>
                     <p>Click "Add Competitor" to start tracking</p>
                     <button className="btn btn-primary" style={{ marginTop: '20px' }} onClick={() => setShowModal(true)}>
-                        ➕ Add Your First Competitor
+                        ＋ Add Your First Competitor
                     </button>
                 </div>
             ) : (

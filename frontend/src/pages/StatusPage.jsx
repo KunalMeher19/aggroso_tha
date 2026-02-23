@@ -87,10 +87,10 @@ export default function StatusPage() {
                             className={`badge ${overallOk ? 'badge-green' : 'badge-red'}`}
                             style={{ fontSize: '0.9rem', padding: '8px 16px' }}
                         >
-                            {overallOk ? '✓ All Systems Operational' : '⚠ Degraded Service'}
+                            {overallOk ? '✓  All Systems Operational' : '▲  Degraded Service'}
                         </span>
                     )}
-                    <button className="btn btn-secondary btn-sm" onClick={fetch}>↺ Refresh</button>
+                    <button className="btn btn-secondary btn-sm" onClick={fetch}>↻ Refresh</button>
                 </div>
             </div>
 
@@ -104,19 +104,19 @@ export default function StatusPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '640px' }}>
                     <ServiceCard
                         name="Backend API"
-                        icon="🖥️"
+                        icon="◈"
                         status={services.backend?.status}
                         message={`Uptime: ${Math.floor((services.backend?.uptime || 0) / 60)}m ${(services.backend?.uptime || 0) % 60}s`}
                     />
                     <ServiceCard
                         name="MongoDB Database"
-                        icon="🗄️"
+                        icon="◉"
                         status={services.database?.status}
                         message={services.database?.message}
                     />
                     <ServiceCard
-                        name="OpenRouter (arcee-ai/trinity:free)"
-                        icon="🤖"
+                        name="OpenRouter AI"
+                        icon="◎"
                         status={services.llm?.status}
                         message={services.llm?.message}
                     />
@@ -130,7 +130,7 @@ export default function StatusPage() {
             )}
 
             <div className="card" style={{ marginTop: '32px', maxWidth: '640px' }}>
-                <h3 style={{ marginBottom: '12px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>🛠 Tech Stack</h3>
+                <h3 style={{ marginBottom: '12px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>▦ Tech Stack</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {[
                         ['Backend', 'Node.js + Express'],

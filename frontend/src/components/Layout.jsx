@@ -1,19 +1,17 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 const navItems = [
-    { path: '/', label: 'Home', icon: '🏠', exact: true },
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/status', label: 'System Status', icon: '🟢' },
+    { path: '/', label: 'Home', icon: '🌑', exact: true },
+    { path: '/dashboard', label: 'Dashboard', icon: '▦', exact: false },
+    { path: '/status', label: 'System Status', icon: '◎' },
 ]
 
 export default function Layout({ children }) {
-    const location = useLocation()
-
     return (
         <div className="app-layout">
             <aside className="sidebar">
                 <div className="sidebar-logo">
-                    <div className="logo-text">⚡ CompTracker</div>
+                    <div className="logo-text">◈ CompTracker</div>
                     <div className="logo-sub">Intelligence Platform</div>
                 </div>
                 <nav className="sidebar-nav">
@@ -34,7 +32,7 @@ export default function Layout({ children }) {
                         by Ardhendu Meher
                     </p>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                        Powered by Gemini 1.5-flash
+                        Powered by OpenRouter AI
                     </p>
                 </div>
             </aside>

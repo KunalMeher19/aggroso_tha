@@ -6,18 +6,18 @@ const steps = [
         icon: '🔗',
         title: 'Add Competitors',
         desc: 'Add competitor links — pricing page, docs, and changelog. Organize them with tags.',
-        color: 'var(--accent-cyan)',
+        color: 'var(--accent-silver)',
     },
     {
         num: '02',
-        icon: '🔍',
+        icon: '🔎',
         title: 'Check Now',
         desc: 'Click "Check Now" to fetch live content and store a snapshot in the database.',
-        color: 'var(--accent-purple)',
+        color: '#888888',
     },
     {
         num: '03',
-        icon: '📊',
+        icon: '📋',
         title: 'See What Changed',
         desc: 'View line-by-line diffs: green for additions, red for removals. See the change score.',
         color: 'var(--accent-green)',
@@ -26,7 +26,7 @@ const steps = [
         num: '04',
         icon: '🤖',
         title: 'AI Summary',
-        desc: 'Gemini AI summarizes changes, highlights business-critical updates, and cites snippets.',
+        desc: 'AI summarizes changes, highlights business-critical updates, and cites snippets.',
         color: 'var(--accent-amber)',
     },
 ]
@@ -35,22 +35,23 @@ export default function HomePage() {
     return (
         <div>
             {/* Hero */}
-            <div style={{ padding: '60px 0 40px', textAlign: 'center' }}>
+            <div style={{ padding: '64px 0 44px', textAlign: 'center' }}>
                 <div
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '8px',
-                        background: 'var(--accent-cyan-dim)',
-                        border: '1px solid var(--border-accent)',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.12)',
                         borderRadius: '100px',
-                        padding: '6px 16px',
+                        padding: '6px 18px',
                         fontSize: '0.78rem',
-                        color: 'var(--accent-cyan)',
-                        marginBottom: '24px',
+                        color: 'var(--text-secondary)',
+                        marginBottom: '28px',
+                        letterSpacing: '0.02em',
                     }}
                 >
-                    <span>✨</span> Powered by Google Gemini 1.5-flash
+                    <span>◈</span> Powered by OpenRouter AI — Free Tier
                 </div>
 
                 <h1
@@ -58,11 +59,9 @@ export default function HomePage() {
                         fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                         fontWeight: 900,
                         lineHeight: 1.1,
-                        background: 'linear-gradient(135deg, #f0f4ff 20%, var(--accent-cyan) 60%, var(--accent-purple) 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
+                        color: 'var(--text-primary)',
                         marginBottom: '20px',
+                        letterSpacing: '-0.02em',
                     }}
                 >
                     Track Competitors.<br />Know What Changed.
@@ -70,22 +69,22 @@ export default function HomePage() {
 
                 <p
                     style={{
-                        fontSize: '1.1rem',
+                        fontSize: '1.05rem',
                         color: 'var(--text-secondary)',
-                        maxWidth: '560px',
-                        margin: '0 auto 40px',
-                        lineHeight: 1.7,
+                        maxWidth: '520px',
+                        margin: '0 auto 44px',
+                        lineHeight: 1.75,
                     }}
                 >
                     Monitor competitor pricing pages, docs, and changelogs. Get instant diffs and AI-powered summaries of what matters.
                 </p>
 
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    <Link to="/dashboard" className="btn btn-primary" style={{ fontSize: '1rem', padding: '14px 32px' }}>
-                        🚀 Open Dashboard
+                    <Link to="/dashboard" className="btn btn-primary" style={{ fontSize: '0.95rem', padding: '13px 30px' }}>
+                        ▶ Open Dashboard
                     </Link>
-                    <Link to="/status" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '14px 32px' }}>
-                        🟢 System Status
+                    <Link to="/status" className="btn btn-secondary" style={{ fontSize: '0.95rem', padding: '13px 30px' }}>
+                        ◎ System Status
                     </Link>
                 </div>
             </div>
@@ -95,7 +94,7 @@ export default function HomePage() {
                 style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                    gap: '20px',
+                    gap: '18px',
                     margin: '40px 0',
                 }}
             >
@@ -106,31 +105,34 @@ export default function HomePage() {
                         style={{
                             position: 'relative',
                             overflow: 'hidden',
+                            borderTop: `2px solid ${step.color}22`,
                         }}
                     >
                         <div
                             style={{
                                 position: 'absolute',
-                                top: '-16px',
-                                right: '-8px',
-                                fontSize: '5rem',
+                                top: '-12px',
+                                right: '-4px',
+                                fontSize: '4.5rem',
                                 opacity: 0.04,
                                 fontWeight: 900,
+                                color: 'white',
                             }}
                         >
                             {step.num}
                         </div>
-                        <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{step.icon}</div>
+                        <div style={{ fontSize: '1.8rem', marginBottom: '14px' }}>{step.icon}</div>
                         <h3
                             style={{
-                                fontSize: '1rem',
+                                fontSize: '0.95rem',
                                 color: step.color,
                                 marginBottom: '8px',
+                                fontWeight: 700,
                             }}
                         >
                             {step.title}
                         </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                        <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
                             {step.desc}
                         </p>
                     </div>
@@ -139,15 +141,15 @@ export default function HomePage() {
 
             {/* Feature highlights */}
             <div className="card" style={{ marginTop: '20px' }}>
-                <h2 style={{ fontSize: '1.1rem', marginBottom: '20px', color: 'var(--text-secondary)' }}>
-                    ✦ Everything you need to stay ahead
+                <h2 style={{ fontSize: '0.95rem', marginBottom: '20px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                    ◈ Everything you need to stay ahead
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
                     {[
-                        ['🏷️', 'Tags & Filters', 'Organize by category'],
-                        ['📅', 'History', 'Last 5 checks per URL'],
-                        ['⚡', 'Change Score', 'See % content change'],
-                        ['🎯', "Matters Filter", 'Business-critical only'],
+                        ['🏷', 'Tags & Filters', 'Organize by category'],
+                        ['📂', 'History', 'Last 5 checks per URL'],
+                        ['◉', 'Change Score', 'See % content change'],
+                        ['◎', 'Smart Filter', 'Business-critical only'],
                         ['🔒', 'Secure', 'No keys in code'],
                         ['🐳', 'Docker Ready', 'One-command deploy'],
                     ].map(([icon, title, desc]) => (
@@ -157,15 +159,16 @@ export default function HomePage() {
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 gap: '10px',
-                                padding: '12px',
-                                background: 'var(--bg-secondary)',
+                                padding: '12px 14px',
+                                background: 'rgba(255,255,255,0.03)',
                                 borderRadius: 'var(--radius-md)',
+                                border: '1px solid var(--border)',
                             }}
                         >
-                            <span style={{ fontSize: '1.2rem' }}>{icon}</span>
+                            <span style={{ fontSize: '1.15rem', opacity: 0.8 }}>{icon}</span>
                             <div>
-                                <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{title}</div>
-                                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>{desc}</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.84rem', color: 'var(--text-primary)' }}>{title}</div>
+                                <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '2px' }}>{desc}</div>
                             </div>
                         </div>
                     ))}

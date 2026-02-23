@@ -2,16 +2,15 @@
 
 ## Architecture Overview
 
-Frontend (React)
+```
+Frontend (React + Vite)
         |
         v
-Backend (Node.js Express)
-        |
-        v
-MongoDB
-        |
-        v
-LLM API Provider
+Backend (Node.js + Express)
+        |             \
+        v              v
+    MongoDB        Google Gemini API
+```
 
 ---
 
@@ -19,22 +18,25 @@ LLM API Provider
 
 ### 1. Models
 
-Competitor
+**Competitor**
 - name
 - urls (pricing, docs, changelog)
 - tags
+- alertThreshold
 - createdAt
 
-Snapshot
+**Snapshot**
 - competitorId
+- urlType (pricing / docs / changelog)
 - rawContent
 - cleanedContent
 - createdAt
 
-CheckResult
+**CheckResult**
 - competitorId
-- snapshotId
-- diffData
+- urlType
+- snapshotId (ref → Snapshot, with `snapshotContent` populated in API response)
+- diffData (added[], removed[], changeScore)
 - llmSummary
 - createdAt
 
@@ -42,108 +44,119 @@ CheckResult
 
 ## 2. Scraping
 
-Use:
-- Axios to fetch page
+Implementation (`scraperService.js`):
+- Axios to fetch page (gzip + redirect support)
+- 3-attempt retry with exponential backoff
+- Googlebot User-Agent as final fallback
 - Cheerio to extract body text
-- Remove scripts, nav, footer
+- Priority selector list (article, main, .content, body)
+- Strips scripts, nav, footer, ads
 
 Normalize content:
 - Remove extra whitespace
-- Split into line blocks
+- Split into line blocks for diffing
 
 ---
 
 ## 3. Diff Algorithm
 
-Approach:
-- Compare previous snapshot cleaned text
-- Use diff library (e.g., diff npm package)
-- Convert to structured JSON:
-  - added
-  - removed
-  - unchanged
-
-Store only significant changes
+Implementation (`diffUtil.js`):
+- Compare previous snapshot `cleanedContent` to new
+- Use `diff` npm package (line-level)
+- Outputs structured JSON:
+  - `added[]` — new lines
+  - `removed[]` — deleted lines
+  - `changeScore` — `(changedLines / baselineLines) × 100`
+- History trimmed to last 5 entries per competitor+urlType
 
 ---
 
 ## 4. LLM Integration
 
 ### Provider
-OpenAI GPT-4o or Anthropic Claude
+**OpenRouter** (`https://openrouter.ai/api/v1`) via `axios`  
+**Model:** `arcee-ai/trinity-large-preview:free`
+
+**Why OpenRouter + arcee-ai/trinity-large-preview?**
+- Completely free tier — no billing required
+- Accessed via standard OpenAI-compatible chat completions API
+- Sufficient context and quality for diff summarization tasks
+- API key set via `OPENROUTER_API_KEY` env var (falls back to `GEMINI_API_KEY`)
 
 ### Prompt Strategy
-- Provide:
-  - Diff output
-  - Instructions to summarize
-  - Ask for:
-    - Important business changes
-    - Pricing updates
-    - Feature updates
-    - Breaking changes
-  - Ask to cite snippets
+- Diff summarization prompt (`llmService.js`):
+  - 2–3 sentence overview
+  - Bullet-point key changes with cited snippets
+  - "Changes That Matter" (pricing, features, breaking changes)
+  - Impact Level: Low / Medium / High
 
 ### Chunking
-If diff > token limit:
-- Split into chunks
-- Summarize per chunk
-- Merge summaries
+If diff > ~8000 chars:
+- Split into ~6000-char chunks
+- Summarize each chunk independently
+- Final merge prompt combines chunk summaries
 
 ---
 
 ## 5. Status Page Implementation
 
-Endpoint: /api/status
+Endpoint: `GET /api/status`
 
 Checks:
-- DB connection
-- LLM test call (short prompt)
+- DB connection (Mongoose ping)
+- LLM test call (`Reply with: OK`)
 - Process uptime
 
 Returns:
+```json
 {
-  backend: "ok",
-  database: "ok",
-  llm: "ok"
+  "backend": "ok",
+  "database": "ok",
+  "llm": "ok",
+  "uptime": 12345
 }
+```
 
 ---
 
-## 6. Error Handling
+## 6. Key Frontend Components
 
-Scenarios:
-- Invalid URL
-- Timeout
-- No previous snapshot
-- LLM failure
-- DB failure
-
-Implement:
-- Try/catch blocks
-- Structured error responses
-- Retry logic for scraping
+- **`SnapshotPreview`** — renders full scraped snapshot content on the competitor detail page without character limit
+- **`DiffViewer`** — renders line-level diff with added/removed highlighting
+- **Modal preview** — scrollable with generous max-height, no truncation
+- **`_redirects` file** (`frontend/public/_redirects`) — `/* /index.html 200` for SPA routing on Netlify/Render
 
 ---
 
-## 7. Security
+## 7. Error Handling
 
-- Store API keys in .env
-- CORS configuration
-- Rate limit “Check Now”
-- Input validation via Joi or Zod
+Scenarios handled:
+- Invalid URL (Zod client + server validation)
+- Fetch timeout / 403 (retry with UA rotation)
+- No previous snapshot (first-check baseline mode)
+- LLM failure (graceful error, diff stored without summary)
+- DB failure (health check reports status)
 
 ---
 
-## 8. Deployment Strategy
+## 8. Security
 
-Backend:
-- Deploy on Render/Railway
-- Persistent Mongo Atlas DB
+- All API keys in `.env` (never committed)
+- CORS whitelist via `FRONTEND_URL` env var
+- Rate limiting on `POST /api/check` — 10 req/min
+- Input validation with Zod on both client and server
 
-Frontend:
-- Deploy on Vercel
+---
 
-Environment:
-- NODE_ENV=production
-- MONGODB_URI
-- LLM_API_KEY
+## 9. Deployment Strategy
+
+**Backend:** Render (free tier, auto-sleep disabled via paid plan or keep-alive ping)  
+**Database:** MongoDB Atlas (free M0 cluster)  
+**Frontend:** Netlify (free tier, `_redirects` file handles SPA routes)
+
+Environment variables set in each platform's dashboard:
+- `NODE_ENV=production`
+- `MONGODB_URI`
+- `GEMINI_API_KEY`
+- `FRONTEND_URL`
+- `VITE_API_URL`

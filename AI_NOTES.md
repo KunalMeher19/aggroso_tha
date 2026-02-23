@@ -2,14 +2,14 @@
 
 ## LLM Provider & Rationale
 
-**Provider:** Google Gemini via `@google/generative-ai` SDK  
-**Model:** `gemini-1.5-flash`
+**Provider:** [OpenRouter](https://openrouter.ai/) via `axios` (OpenAI-compatible API)  
+**Model:** `arcee-ai/trinity-large-preview:free`
 
-**Why Gemini 1.5-flash?**
-- Generous free tier (adequate for demo/testing)
-- Fast inference for summarization tasks
-- Large context window (1M tokens) — ideal for large page diffs
-- No need for a paid subscription to test the app
+**Why OpenRouter + arcee-ai/trinity-large-preview?**
+- Completely free tier — no credit card or billing required
+- OpenAI-compatible `/chat/completions` endpoint — easy to swap models
+- Quality sufficient for competitive diff summarization
+- API key configured via `OPENROUTER_API_KEY` env var
 
 ---
 

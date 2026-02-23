@@ -27,7 +27,9 @@ Design decisions I'm proud of:
 - **Diff chunking strategy** to stay within LLM token limits without truncating useful data
 - **Change score metric** (% of content that changed) as a quick visual gauge without reading diffs
 - **Premium dark UI** — I believe developer tools should look as good as they work
+- **Full snapshot preview** on the competitor detail page — view the complete scraped content without character limits
+- **`_redirects` file** added to the frontend for clean SPA routing on Netlify/Render (no more "Route not found" on reload)
 
 ---
 
-*Connect with me on [LinkedIn](https://linkedin.com/in/ardhendumeher) | [GitHub](https://github.com/ardhendumeher)*
+*Connect with me on [LinkedIn](https://www.linkedin.com/in/kunaldotio) | [GitHub](https://github.com/KunalMeher19)*

@@ -1,6 +1,8 @@
 # CompTracker — Competitive Intelligence Tracker
 
-Monitor competitor websites, detect content changes, and get AI-powered summaries. Built with Node.js, React, MongoDB, and Google Gemini.
+Monitor competitor websites, detect content changes, and get AI-powered summaries. Built with Node.js, React, MongoDB, and OpenRouter AI.
+
+🔗 **Live Demo:** [Frontend on Netlify/Render](https://github.com/KunalMeher19/aggroso_tha) | **API:** [aggroso-tha-backend.onrender.com](https://aggroso-tha-backend.onrender.com/)
 
 ---
 
@@ -8,7 +10,7 @@ Monitor competitor websites, detect content changes, and get AI-powered summarie
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/aggroso_tha.git
+git clone https://github.com/KunalMeher19/aggroso_tha.git
 cd aggroso_tha
 
 # 2. Set your Gemini API key
@@ -74,9 +76,9 @@ npm run dev               # starts on :3000
 | Database | MongoDB + Mongoose |
 | Scraping | Axios + Cheerio (3-retry, UA rotation) |
 | Diff | `diff` npm package (line-level) |
-| AI | Google Gemini 1.5-flash |
+| AI | OpenRouter (`arcee-ai/trinity-large-preview:free`) |
 | Frontend | React + Vite |
-| Deployment | Docker + Nginx |
+| Deployment | Docker + Nginx / Render + Netlify |
 
 ---
 
@@ -87,13 +89,15 @@ npm run dev               # starts on :3000
 - [x] Line-level diff with change score (% content changed)
 - [x] Gemini AI summary with business-critical highlights and citations
 - [x] Diff chunking for large pages (token limit handling)
-- [x] History: last 5 checks per competitor per URL type
+- [x] History: last 5 checks per competitor per URL type (with full snapshot content in API response)
+- [x] **SnapshotPreview component** on competitor detail page — shows full scraped content without character limit
 - [x] Status page: backend uptime, DB ping, LLM test call
 - [x] Input validation (Zod — client + server)
 - [x] Tags, tag filter, alert threshold config
 - [x] Premium dark theme React UI
 - [x] Docker Compose one-command run
 - [x] `.env.example` for both backend and frontend
+- [x] **`_redirects` file** in frontend for clean SPA routing on Netlify/Render (fixes "Route not found" on page reload)
 
 ## ❌ What's Not Done (Future Work)
 
@@ -105,13 +109,13 @@ npm run dev               # starts on :3000
 
 ---
 
-## 🔑 Getting a Gemini API Key
+## 🔑 Getting an OpenRouter API Key
 
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Create a free API key
-3. Add to `backend/.env` as `GEMINI_API_KEY=...`
+1. Go to [openrouter.ai](https://openrouter.ai/)
+2. Sign up and create a free API key
+3. Add to `backend/.env` as `OPENROUTER_API_KEY=...`
 
-Gemini 1.5-flash is free tier with generous limits — perfect for this use case.
+The model used is `arcee-ai/trinity-large-preview:free` — a free tier model on OpenRouter, no billing required.
 
 ---
 
@@ -124,4 +128,4 @@ The `docker-compose.yml` starts:
 
 ---
 
-*Built by Ardhendu Abhishek Meher*
+*Built by [Kunal Meher](https://www.linkedin.com/in/kunaldotio) · [GitHub](https://github.com/KunalMeher19)*

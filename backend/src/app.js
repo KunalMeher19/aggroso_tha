@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -54,6 +55,12 @@ app.use((req, _res, next) => {
 // Routes
 app.use('/api/competitors', competitorRoutes);
 app.use('/api/status', statusRoutes);
+
+// Serve built frontend static files
+app.use(express.static(path.join(__dirname, '../public')));
+app.get('*name', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 // Health check (lightweight, no DB)
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));

@@ -115,7 +115,7 @@ export default function StatusPage() {
                         message={services.database?.message}
                     />
                     <ServiceCard
-                        name="Gemini 1.5-flash-latest (LLM)"
+                        name="OpenRouter (llama-3.1-8b:free)"
                         icon="🤖"
                         status={services.llm?.status}
                         message={services.llm?.message}
@@ -135,7 +135,7 @@ export default function StatusPage() {
                     {[
                         ['Backend', 'Node.js + Express'],
                         ['Database', 'MongoDB (Mongoose)'],
-                        ['AI Provider', 'Google Gemini 1.5-flash-latest'],
+                        ['AI Provider', 'OpenRouter — llama-3.1-8b-instruct:free'],
                         ['Scraping', 'Axios + Cheerio (3-retry + UA rotation)'],
                         ['Diff Engine', 'npm diff (line-level)'],
                         ['Frontend', 'React + Vite'],

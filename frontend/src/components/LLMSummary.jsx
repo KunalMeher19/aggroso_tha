@@ -15,7 +15,7 @@ export default function LLMSummary({ summary, status }) {
     }
 
     const statusBadge = status === 'success'
-        ? <span className="badge badge-green">✓ Gemini</span>
+        ? <span className="badge badge-green">✓ AI</span>
         : status === 'failed'
             ? <span className="badge badge-red">⚠ Failed</span>
             : status === 'no_changes'

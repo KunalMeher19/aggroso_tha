@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getCompetitors, deleteCompetitor, checkNow } from '../api'
 import { useToast } from '../context/ToastContext'
 import AddCompetitorModal from '../components/AddCompetitorModal'
+import CheckResultModal from '../components/CheckResultModal'
 
 const TAG_COLORS = ['badge-cyan', 'badge-purple', 'badge-green', 'badge-amber']
 
@@ -35,9 +36,10 @@ function CompetitorCard({ competitor, onDeleted, onChecked }) {
         e.stopPropagation()
         setChecking(true)
         try {
-            await checkNow(competitor._id)
+            const res = await checkNow(competitor._id)
             show(`${competitor.name} checked!`, 'success')
-            onChecked(competitor._id)
+            // Pass competitor + the result data array up so parent can show modal
+            onChecked(competitor, res.data || [])
         } catch (err) {
             show(err.message, 'error')
         } finally {
@@ -119,7 +121,7 @@ function CompetitorCard({ competitor, onDeleted, onChecked }) {
                         disabled={checking}
                     >
                         {checking ? (
-                            <><span className="spinner" style={{ width: 14, height: 14 }} /> Checking...</>
+                            <><span className="spinner" style={{ width: 14, height: 14 }} /> Checking…</>
                         ) : '▶ Check Now'}
                     </button>
                 </div>
@@ -134,6 +136,8 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [filterTag, setFilterTag] = useState('')
+    // State for the check result modal
+    const [checkResult, setCheckResult] = useState(null) // { competitor, results }
 
     const load = useCallback(async () => {
         try {
@@ -153,7 +157,14 @@ export default function DashboardPage() {
 
     const handleAdded = (newComp) => setCompetitors((prev) => [newComp, ...prev])
     const handleDeleted = (id) => setCompetitors((prev) => prev.filter((c) => c._id !== id))
-    const handleChecked = () => load()
+
+    // Capture check results → show modal, then refresh list
+    const handleChecked = (competitor, results) => {
+        setCheckResult({ competitor, results })
+        load() // refresh scores in background
+    }
+
+    const closeCheckResult = () => setCheckResult(null)
 
     return (
         <div>
@@ -225,12 +236,23 @@ export default function DashboardPage() {
                 </div>
             )}
 
+            {/* Add competitor modal */}
             {showModal && (
                 <AddCompetitorModal
                     onClose={() => setShowModal(false)}
                     onAdded={handleAdded}
                 />
             )}
+
+            {/* Check result modal */}
+            {checkResult && (
+                <CheckResultModal
+                    competitor={checkResult.competitor}
+                    results={checkResult.results}
+                    onClose={closeCheckResult}
+                />
+            )}
         </div>
     )
 }
+

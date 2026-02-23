@@ -17,7 +17,9 @@ app.use(helmet());
 // CORS
 const allowedOrigins = [
     process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://aggroso-tha-backend.onrender.com', // live production
     'http://localhost:5173', // Vite dev server
+    'http://localhost:3000', // local frontend
 ];
 app.use(
     cors({

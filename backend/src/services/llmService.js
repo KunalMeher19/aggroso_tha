@@ -7,7 +7,7 @@ const getClient = () => {
     if (!genAI) {
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
-        genAI = new GoogleGenerativeAI(apiKey);
+        genAI = new GoogleGenerativeAI(apiKey, { apiVersion: 'v1' });
     }
     return genAI;
 };
@@ -81,7 +81,7 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
 
     try {
         const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
 
         const totalChars = [...added, ...removed].join('').length;
 
@@ -129,7 +129,7 @@ const summarizeDiff = async (competitorName, urlType, diffData) => {
 const testLLMConnection = async () => {
     try {
         const client = getClient();
-        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash-001' });
         const result = await model.generateContent('Reply with: OK');
         const text = result.response.text();
         return { ok: true, response: text.trim() };
